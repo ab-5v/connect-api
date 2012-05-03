@@ -5,6 +5,7 @@
  See test/index.js for example of usage.
  
  Installation:
+ 
     $ npm install connect-api 
  
  Running tests:
