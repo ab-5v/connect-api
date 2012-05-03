@@ -1,0 +1,14 @@
+{
+    "name": "connect-api",
+    "version": "0.1.0",
+    "description": "REST API connect middleware",
+    "dependencies": {},
+    "devDependencies": {
+        "should": "*",
+        "mocha": "*",
+        "connect": "*",
+        "request": "*"
+    },
+    "main": "index",
+    "engines": { "node": ">= 0.5.0 < 0.7.0" }
+}
