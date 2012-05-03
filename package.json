@@ -1,7 +1,10 @@
 {
     "name": "connect-api",
     "version": "0.1.0",
-    "description": "REST API connect middleware",
+    "keywords": ["framework", "api", "middleware", "connect", "json"],
+    "author": "Artur Burtsev <artjock@gmail.com>",
+    "description": "REST JSON API connect middleware",
+    "repository": "git://github.com/artjock/connect-api",
     "dependencies": {},
     "devDependencies": {
         "should": "*",
