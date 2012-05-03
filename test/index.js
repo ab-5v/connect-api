@@ -1,7 +1,8 @@
 var connect = require('connect');
 var api = require('../index.js');
-var responser = require('./responser.js');
 
 connect()
 .use(api(__dirname + '/handlers'))
-.listen(33333)
+.listen(33333);
+
+console.log('listen on localhost:33333');

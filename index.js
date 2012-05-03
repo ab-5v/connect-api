@@ -33,6 +33,10 @@ module.exports = function(root, options) {
 
         handler = require(root + '/' + name + '.js');
 
+        if (!action) {
+            action = 'index';
+        }
+
         if (typeof handler[action] !== 'function') {
             return end({message: 'wrong action (' + action + ')'});
         }

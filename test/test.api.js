@@ -29,4 +29,18 @@ describe('api', function() {
             done();
         })
     });
+
+    it('should pass correct action on root', function(done){
+        request('http://localhost:33333/foo', function(err, req, body) {
+            body.should.equal('{"status":"OK","result":"index"}');
+            done();
+        })
+    });
+
+    it('should pass correct action on /', function(done){
+        request('http://localhost:33333/foo/', function(err, req, body) {
+            body.should.equal('{"status":"OK","result":"index"}');
+            done();
+        })
+    });
 });
