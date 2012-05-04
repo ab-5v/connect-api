@@ -41,7 +41,7 @@ module.exports = function(root, options) {
             return end({message: 'wrong action (' + action + ')'});
         }
 
-        params = req.body && Object.keys(req.body).length || qs.parse(query);
+        params = req.body && Object.keys(req.body).length && req.body || qs.parse(query);
 
         if (typeof handler['_before'] === 'function') {
             handler._before(action, params, function(err, data) {
