@@ -1,6 +1,6 @@
 var qs = require('querystring');
 
-var re = /([^\/]+)\/?([^\?]*)\/??(.*)/
+var re = /([^\/]+)\/?([^\?\/]*)\/?\??(.*)/
 
 module.exports = function(root, options) {
     options = options || {};
@@ -41,7 +41,7 @@ module.exports = function(root, options) {
             return end({message: 'wrong action (' + action + ')'});
         }
 
-        params = req.body || qs.parse(query);
+        params = req.body && Object.keys(req.body).length || qs.parse(query);
 
         if (typeof handler['_before'] === 'function') {
             handler._before(action, params, function(err, data) {
