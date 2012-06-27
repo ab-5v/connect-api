@@ -1,58 +1,76 @@
+var fs = require('fs');
 var qs = require('querystring');
+var connect = require('connect');
 
 var re = /([^\/]+)\/?([^\?\/]*)\/?\??(.*)/
+var rest = {
+    'POST'  : 'create',
+    'GET'   : 'read',
+    'PUT'   : 'update',
+    'DELETE': 'destroy',
+};
+
+var parseREST = function(req) {
+    var parts = req.url.split('/').slice(1);
+    var method = req.method;
+
+    var handler = parts.shift();
+    var id = parts.shift();
+    var action = rest[method];
+
+    var params = /POST|GET/.test(method) ? req.body : {};
+
+    if (id) {
+        params._id = id;
+    }
+
+    return {
+        handler: handler,
+        action: action,
+        params: params
+    }
+};
+var parseHTTP = function(req) {
+};
+
+var error = function(res, code, message) {
+    res.statusCode = code;
+    res.end(message);
+};
+
+var format = function(err, data) {
+    return err ?
+        {status: 'error', message: err.message}:
+        {status: 'OK', result: data};
+};
 
 module.exports = function(root, options) {
     options = options || {};
 
     if (!root) throw new Error('api() root path required');
 
-    var handlers = require(root);
+    // load all handlers
+    var handlers = {};
+    fs.readdirSync(root).forEach(function(handler) {
+        var name = handler.replace(/\.js$/, '');
+        handlers[ name ] = require( root + '/' + handler );
+    });
+    console.log(handlers);
+
+    // choose request parser
+    var parse = options.rest ? parseREST : parseHTTP;
 
     return function(req, res, next) {
 
-        var match = req.url.match(re);
-        var name, action, query, handler, params;
-        var end = function(err, data) {
-            var response = err ? {status: 'error', message: err.message} : {status: 'OK', result: data};
+        var api = parse(req);
+        var handler = handlers[ api.handler ];
+        var end = function(e, d) { res.end( JSON.stringify(format(e, d)) ); }
 
-            res.end( JSON.stringify(response) );
-        };
-
-        if (!match) {
-            return end({message: 'incorrect request (' + req.url + ')'});
+        if (!handler || typeof handler[ api.action ] !== 'function') {
+            error(res, 404, req.url);
         }
 
-        name = match[1];
-        action = match[2];
-        query = match[3];
-
-        if (handlers.indexOf(name) === -1) {
-            return end({message: 'unknown handler (' + name + ')'});
-        }
-
-        handler = require(root + '/' + name + '.js');
-
-        if (!action) {
-            action = 'index';
-        }
-
-        if (typeof handler[action] !== 'function') {
-            return end({message: 'wrong action (' + action + ')'});
-        }
-
-        params = req.body && Object.keys(req.body).length && req.body || qs.parse(query);
-
-        if (typeof handler['_before'] === 'function') {
-            handler._before(action, params, function(err, data) {
-                if (err) { return end(err); }
-
-                handler[action](params, end, data || {}, req, res);
-            }, req, res);
-
-        } else {
-            handler[action](params, end, {}, req, res);
-        }
+        handler[ api.action ]( api.params, end, req, res );
 
     };
 };
