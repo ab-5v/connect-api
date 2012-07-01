@@ -18,7 +18,7 @@ var parseREST = function(req) {
     var id = parts.shift();
     var action = rest[method];
 
-    var params = /POST|GET/.test(method) ? req.body : {};
+    var params = /POST|PUT/.test(method) ? req.body : {};
 
     if (id) {
         params._id = id;
@@ -55,7 +55,6 @@ module.exports = function(root, options) {
         var name = handler.replace(/\.js$/, '');
         handlers[ name ] = require( root + '/' + handler );
     });
-    console.log(handlers);
 
     // choose request parser
     var parse = options.rest ? parseREST : parseHTTP;
