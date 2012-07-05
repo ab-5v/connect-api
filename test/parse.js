@@ -1,17 +1,5 @@
 var parse = require('../').parse;
-
-var req = function(path, body) {
-    var m = path.match(/^(GET|POST|PUT|DELETE)\s(.*)$/);
-    if (m) {
-        return parse({
-            method: m[1],
-            url: m[2],
-            body: body || {}
-        });
-    } else {
-        throw "wrong req"
-    }
-};
+var req = require('./util/request')(parse);
 
 describe('parse', function() {
 
