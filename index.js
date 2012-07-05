@@ -68,10 +68,11 @@ module.exports = function(root, options) {
 
         if (!handler || typeof handler[ api.action ] !== 'function') {
             res.statusCode = 404;
-            res.end(req.url);
-        }
+            res.end(req.method + ' ' + req.url);
+        } else {
 
-        handler[ api.action ]( api.params, end, req, res );
+            handler[ api.action ]( api.params, end, req, res );
+        }
 
     };
 };

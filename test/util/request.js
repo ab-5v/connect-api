@@ -33,7 +33,9 @@ module.exports = function(emulator) {
 
         request(options, function(err, req, data) {
             if (typeof data === 'string') {
-                data = JSON.parse(data);
+                try {
+                    data = JSON.parse(data);
+                } catch (e) {}
             }
 
             callback(err, req, data);
