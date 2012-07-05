@@ -1,8 +1,6 @@
 var fs = require('fs');
 var qs = require('querystring');
-var connect = require('connect');
 
-var re = /([^\/]+)\/?([^\?\/]*)\/?\??(.*)/
 var rest = {
     'POST'  : 'create',
     'GET'   : 'read',
@@ -10,18 +8,27 @@ var rest = {
     'DELETE': 'destroy',
 };
 
-var parseREST = function(req) {
-    var parts = req.url.split('/').slice(1);
+var parse = function(req) {
+    var id;
+    var params = req.body;
     var method = req.method;
+    var parts = req.url.split('?');
+    var path = parts.shift().split('/').slice(1);
+    var query = parts.join('?');
 
-    var handler = parts.shift();
-    var id = parts.shift();
-    var action = rest[method];
+    var handler = path.shift();
+    var action = path.shift();
 
-    var params = /POST|PUT/.test(method) ? req.body : {};
+    if (method === 'GET') {
+        params = qs.parse(query);
+    }
 
-    if (id) {
-        params._id = id;
+    if (!action || /PUT|DELETE/.test(method)) {
+        id = action;
+        action = rest[method];
+        if (id) {
+            params._id = id;
+        }
     }
 
     return {
@@ -30,22 +37,19 @@ var parseREST = function(req) {
         params: params
     }
 };
-var parseHTTP = function(req) {
-};
-
-var error = function(res, code, message) {
-    res.statusCode = code;
-    res.end(message);
-};
 
 var format = function(err, data) {
-    return err ?
+    var res = err ?
         {status: 'error', message: err.message}:
         {status: 'OK', result: data};
+
+    return JSON.stringify(res);
 };
 
 module.exports = function(root, options) {
     options = options || {};
+
+    options.format = options.format || format;
 
     if (!root) throw new Error('api() root path required');
 
@@ -56,20 +60,21 @@ module.exports = function(root, options) {
         handlers[ name ] = require( root + '/' + handler );
     });
 
-    // choose request parser
-    var parse = options.rest ? parseREST : parseHTTP;
-
     return function(req, res, next) {
 
         var api = parse(req);
         var handler = handlers[ api.handler ];
-        var end = function(e, d) { res.end( JSON.stringify(format(e, d)) ); }
+        var end = function(e, d) { res.end( format.apply(req, arguments) ); }
 
         if (!handler || typeof handler[ api.action ] !== 'function') {
-            error(res, 404, req.url);
+            res.statusCode = 404;
+            res.end(req.url);
         }
 
         handler[ api.action ]( api.params, end, req, res );
 
     };
 };
+
+// for testing only
+module.exports.parse = parse;

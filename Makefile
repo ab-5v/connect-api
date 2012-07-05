@@ -1,4 +1,4 @@
+TESTS=test/*.js
 test:
-	npm install
-	mocha --require should test/test.*.js
+	mocha --require should --reporter spec $(TESTS)
 .PHONY: test
