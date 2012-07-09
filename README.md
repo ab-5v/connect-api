@@ -2,7 +2,7 @@
 
  Connect-api is a simple REST JSON middleware for [connect](http://www.senchalabs.org/connect/).
 
- See test/index.js for example of usage.
+ See `test/fixtures/index.js` for example of usage.
  
  Installation:
  
