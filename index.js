@@ -8,13 +8,30 @@ var rest = {
     'DELETE': 'destroy',
 };
 
+var ctypes = {
+    'json': 'application/json; charset=utf-8',
+    'txt': 'text/plain; charset=utf-8'
+};
+
 var parse = function(req) {
-    var id;
+    console.log(req.url);
+    var id, type, dot;
     var params = req.body;
     var method = req.method;
     var parts = req.url.split('?');
-    var path = parts.shift().split('/').slice(1);
+    var path = parts.shift().slice(1);
     var query = parts.join('?');
+
+    dot = path.split('.');
+    type = dot.pop();
+
+    if (type in ctypes) {
+        path = dot.join('.');
+    } else {
+        type = 'txt';
+    }
+
+    path = path.split('/');
 
     var handler = path.shift();
     var action = path.shift();
@@ -34,7 +51,8 @@ var parse = function(req) {
     return {
         handler: handler,
         action: action,
-        params: params
+        params: params,
+        ctype: ctypes[type]
     }
 };
 
@@ -70,7 +88,7 @@ module.exports = function(root, options) {
             res.statusCode = 404;
             res.end(req.method + ' ' + req.url);
         } else {
-
+            res.setHeader('Content-type', api.ctype);
             handler[ api.action ]( api.params, end, req, res );
         }
 

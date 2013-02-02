@@ -9,7 +9,17 @@ describe('parse', function() {
             req('GET /handler').should.eql({
                 handler: 'handler',
                 action: 'read',
-                params: {}
+                params: {},
+                ctype: 'text/plain; charset=utf-8'
+            });
+        });
+
+        it('basic.json', function() {
+            req('GET /handler.json').should.eql({
+                handler: 'handler',
+                action: 'read',
+                params: {},
+                ctype: 'application/json; charset=utf-8'
             });
         });
 
@@ -20,7 +30,20 @@ describe('parse', function() {
                 params: {
                     lol: '1',
                     none: ['a', 'b']
-                }
+                },
+                ctype: 'text/plain; charset=utf-8'
+            });
+        });
+
+        it('params.json', function() {
+            req('GET /handler.json?lol=1&none=a&none=b').should.eql({
+                handler: 'handler',
+                action: 'read',
+                params: {
+                    lol: '1',
+                    none: ['a', 'b']
+                },
+                ctype: 'application/json; charset=utf-8'
             });
         });
 
@@ -28,7 +51,17 @@ describe('parse', function() {
             req('GET /handler/action').should.eql({
                 handler: 'handler',
                 action: 'action',
-                params: {}
+                params: {},
+                ctype: 'text/plain; charset=utf-8'
+            });
+        });
+
+        it('action.json', function() {
+            req('GET /handler/action.json').should.eql({
+                handler: 'handler',
+                action: 'action',
+                params: {},
+                ctype: 'application/json; charset=utf-8'
             });
         });
 
@@ -39,7 +72,20 @@ describe('parse', function() {
                 params: {
                     lol: '1',
                     none: ['a', 'b']
-                }
+                },
+                ctype: 'text/plain; charset=utf-8'
+            });
+        });
+
+        it('action.json params', function() {
+            req('GET /handler/action.json?lol=1&none=a&none=b').should.eql({
+                handler: 'handler',
+                action: 'action',
+                params: {
+                    lol: '1',
+                    none: ['a', 'b']
+                },
+                ctype: 'application/json; charset=utf-8'
             });
         });
     });
@@ -50,7 +96,8 @@ describe('parse', function() {
             req('POST /handler').should.eql({
                 handler: 'handler',
                 action: 'create',
-                params: {}
+                params: {},
+                ctype: 'text/plain; charset=utf-8'
             });
         });
 
@@ -58,7 +105,8 @@ describe('parse', function() {
             req('POST /handler', {param: 'val'}).should.eql({
                 handler: 'handler',
                 action: 'create',
-                params: {param: 'val'}
+                params: {param: 'val'},
+                ctype: 'text/plain; charset=utf-8'
             });
         });
 
@@ -66,7 +114,8 @@ describe('parse', function() {
             req('POST /handler/action').should.eql({
                 handler: 'handler',
                 action: 'action',
-                params: {}
+                params: {},
+                ctype: 'text/plain; charset=utf-8'
             });
         });
 
@@ -74,7 +123,8 @@ describe('parse', function() {
             req('POST /handler/action', {param: [1,2,3]}).should.eql({
                 handler: 'handler',
                 action: 'action',
-                params: {param: [1,2,3]}
+                params: {param: [1,2,3]},
+                ctype: 'text/plain; charset=utf-8'
             });
         });
     });
@@ -85,7 +135,8 @@ describe('parse', function() {
             req('PUT /handler').should.eql({
                 handler: 'handler',
                 action: 'update',
-                params: {}
+                params: {},
+                ctype: 'text/plain; charset=utf-8'
             });
         });
 
@@ -93,7 +144,8 @@ describe('parse', function() {
             req('PUT /handler/someid').should.eql({
                 handler: 'handler',
                 action: 'update',
-                params: {_id: 'someid'}
+                params: {_id: 'someid'},
+                ctype: 'text/plain; charset=utf-8'
             });
         });
 
@@ -101,7 +153,8 @@ describe('parse', function() {
             req('PUT /handler', {param: 'val'}).should.eql({
                 handler: 'handler',
                 action: 'update',
-                params: {param: 'val'}
+                params: {param: 'val'},
+                ctype: 'text/plain; charset=utf-8'
             });
         });
 
@@ -109,7 +162,8 @@ describe('parse', function() {
             req('PUT /handler/someid', {param: 'val'}).should.eql({
                 handler: 'handler',
                 action: 'update',
-                params: {param: 'val', _id: 'someid'}
+                params: {param: 'val', _id: 'someid'},
+                ctype: 'text/plain; charset=utf-8'
             });
         });
 
@@ -121,7 +175,8 @@ describe('parse', function() {
             req('DELETE /handler').should.eql({
                 handler: 'handler',
                 action: 'destroy',
-                params: {}
+                params: {},
+                ctype: 'text/plain; charset=utf-8'
             });
         });
 
@@ -129,7 +184,8 @@ describe('parse', function() {
             req('DELETE /handler/someid').should.eql({
                 handler: 'handler',
                 action: 'destroy',
-                params: {_id: 'someid'}
+                params: {_id: 'someid'},
+                ctype: 'text/plain; charset=utf-8'
             });
         });
 
