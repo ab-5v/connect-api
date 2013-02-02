@@ -14,7 +14,6 @@ var ctypes = {
 };
 
 var parse = function(req) {
-    console.log(req.url);
     var id, type, dot;
     var params = req.body;
     var method = req.method;
